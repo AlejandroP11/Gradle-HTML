@@ -2,6 +2,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,18 +10,25 @@ import java.util.List;
 
 public class TiempoVigo {
     public static void main(String[] args) {
-        //Ejemplo del JDOM2 con el tutorial online.
+        org.jsoup.nodes.Document docSOU = null;
+        try{
+            docSOU= Jsoup.connect("http://www.aemet.es/es/eltiempo/prediccion/municipios/vigo-id36057").get();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        System.out.println(docSOU.toString());
+        //comienza jdom
         SAXBuilder builder = new SAXBuilder();
         File xml = new File("localidad_36057.xml");
-        Document document = null;
+        org.jdom2.Document docJDOM = null;
         try {
-            document = builder.build(xml);
+            docJDOM = builder.build(docSOU.toString());
         } catch (JDOMException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Element root = document.getRootElement();
+        Element root = docJDOM.getRootElement();
         System.out.println(root.getName());
         List<Element> prediccion = root.getChildren("prediccion");
         List<Element> dias=root.getChild("prediccion").getChildren("dia");
